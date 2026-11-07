@@ -1,0 +1,46 @@
+[mod]
+id = "dreadfall"
+version = "0.1.0"
+priority = 100
+
+# Vasysik/horizon-android v0.7.7, not an upstream desktop Horizon commit.
+[compatibility]
+horizon_revision = "80700a6f26afe53a368032d8b28bd364f7c3e7e4"
+
+[[module]]
+id = "runtime"
+file = "crates/horizon-client/src/game.rs"
+name = "dreadfall"
+source = "runtime.rs"
+
+[[injection]]
+id = "nightfall"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_level_tick_post"
+helper = "level_tick.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "dimension", ty = "&str", value = "dimension" },
+]
+
+[[injection]]
+id = "dark_mining"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_destroy_block"
+helper = "destroy_block.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "pos", ty = "[i32; 3]", value = "pos" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
+
+[[injection]]
+id = "soul_ritual"
+kind = "HEAD"
+target = "horizon_client::game::native_hooks::Game<'_>::native_right_click_block"
+helper = "right_click.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "pos", ty = "[i32; 3]", value = "pos" },
+  { name = "canceled", ty = "&mut bool", value = "&mut *canceled" },
+]
